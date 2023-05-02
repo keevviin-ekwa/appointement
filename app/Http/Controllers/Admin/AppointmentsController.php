@@ -11,8 +11,10 @@ use App\Http\Requests\MassDestroyAppointmentRequest;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Service;
+use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -20,53 +22,10 @@ class AppointmentsController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = Appointment::select(sprintf('%s.*', (new Appointment)->table));
-            $table = Datatables::of($query);
 
-            $table->addColumn('placeholder', '&nbsp;');
-            $table->addColumn('actions', '&nbsp;');
+        $appointments= Appointment::all();
 
-            $table->editColumn('actions', function ($row) {
-                $viewGate      = 'appointment_show';
-                $editGate      = 'appointment_edit';
-                $deleteGate    = 'appointment_delete';
-                $crudRoutePart = 'appointments';
-
-                return view('partials.datatablesActions', compact(
-                    'viewGate',
-                    'editGate',
-                    'deleteGate',
-                    'crudRoutePart',
-                    'row'
-                ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : "";
-            });
-            $table->addColumn('client_name', function ($row) {
-                return $row->client ? $row->client->name : '';
-            });
-
-            $table->addColumn('employee_name', function ($row) {
-                return $row->employee ? $row->employee->name : '';
-            });
-
-            $table->editColumn('price', function ($row) {
-                return $row->price ? $row->price : "";
-            });
-            $table->editColumn('comments', function ($row) {
-                return $row->comments ? $row->comments : "";
-            });
-
-
-            $table->rawColumns(['actions', 'placeholder', 'client', 'employee', 'services']);
-
-            return $table->make(true);
-        }
-
-        return view('admin.appointments.index');
+        return view('admin.appointments.index',compact('appointments'));
     }
 
     public function create()
@@ -82,9 +41,51 @@ class AppointmentsController extends Controller
         return view('admin.appointments.create', compact('clients', 'employees', 'cares'));
     }
 
+
+
+
     public function store(StoreAppointmentRequest $request)
     {
-        $appointment = Appointment::create($request->all());
+
+
+
+
+
+        $time=0;
+        foreach ($request->services as $care){
+            $car= Care::find($care);
+            $time=$time+$car->time;
+        }
+        $start_time=$request->start_time;
+        $finish_time=Carbon::parse($request->start_time)->addMinute($time);
+        $employee_appointemnt= DB::table('appointments')->whereDate('created_at',Carbon::today())->get();
+        $date=[];
+        $i=0;
+        foreach ($employee_appointemnt as $app)
+        {
+            echo $app->start_time;
+            $date [$app->id]=$app->start_time;
+        }
+
+
+        usort($date, function ($a, $b) {
+            return strtotime($a) - strtotime($b);
+        });
+
+        dd($date);
+
+
+
+
+
+
+
+        $appointment= new Appointment();
+        $appointment->start_time=$request->start_time;
+        $appointment->finish_time=Carbon::parse($request->start_time)->addMinute($time);
+        $appointment->client_id=$request->client_id;
+        $appointment->employee_id =$request->employee_id;
+        $appointment->save();
         $service= new Service();
         $som=0.0;
         foreach ($request->services as $_service)
@@ -129,13 +130,19 @@ class AppointmentsController extends Controller
         return redirect()->route('admin.appointments.index');
     }
 
-    public function show(Appointment $appointment)
+    public function show($id)
+
     {
-        abort_if(Gate::denies('appointment_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $appointment=Appointment::find($id);
+        $cost=0;
+        $duree=0;
+        foreach ($appointment->services->cares as $care){
+            $cost=$cost+$care->cost;
+            $duree=$duree+$care->time;
+        }
 
-        $appointment->load('client', 'employee', 'services');
 
-        return view('admin.appointments.show', compact('appointment'));
+        return view('admin.appointments.show', ['appointment'=>$appointment,'cost'=>$cost,'duree'=>$duree]);
     }
 
     public function destroy(Appointment $appointment)

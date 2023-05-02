@@ -3,7 +3,7 @@
 
 <div class="card">
     <div class="card-header">
-        {{ trans('global.show') }} {{ trans('cruds.appointment.title') }}
+      Reservation
     </div>
 
     <div class="card-body">
@@ -12,7 +12,7 @@
                 <tbody>
                     <tr>
                         <th>
-                            {{ trans('cruds.appointment.fields.id') }}
+                            Id
                         </th>
                         <td>
                             {{ $appointment->id }}
@@ -20,7 +20,15 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.appointment.fields.client') }}
+                            Date
+                        </th>
+                        <td>
+                            {{ $appointment->start_time ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Client
                         </th>
                         <td>
                             {{ $appointment->client->name ?? '' }}
@@ -28,34 +36,26 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.appointment.fields.employee') }}
+                           Employe
                         </th>
                         <td>
-                            {{ $appointment->employee->name ?? '' }}
+                            {{ $appointment->employee->name }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.appointment.fields.start_time') }}
+                            Durre
                         </th>
                         <td>
-                            {{ $appointment->start_time }}
+                            {{ $duree }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.appointment.fields.finish_time') }}
+                            Cout
                         </th>
                         <td>
-                            {{ $appointment->finish_time }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.appointment.fields.price') }}
-                        </th>
-                        <td>
-                            ${{ $appointment->price }}
+                            {{$cost}}
                         </td>
                     </tr>
                     <tr>
@@ -68,18 +68,18 @@
                     </tr>
                     <tr>
                         <th>
-                            Services
+                            Soins
                         </th>
                         <td>
-                            @foreach($appointment->services as $id => $services)
-                                <span class="label label-info label-many">{{ $services->name }}</span>
+                            @foreach($appointment->services->cares as $id => $cares)
+                                <span class="label label-info label-many">{{ $cares->name }} ;</span>
                             @endforeach
                         </td>
                     </tr>
                 </tbody>
             </table>
             <a style="margin-top:20px;" class="btn btn-default" href="{{ url()->previous() }}">
-                {{ trans('global.back_to_list') }}
+                Liste des reservations
             </a>
         </div>
 

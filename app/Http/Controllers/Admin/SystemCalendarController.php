@@ -11,7 +11,7 @@ class SystemCalendarController extends Controller
     public function index()
     {
         $events = [];
-
+       // $calendar_details = Calendar::addEvents($event_list)->setOptions(['lang' => 'nl']);
         $appointments = Appointment::with(['client', 'employee'])->get();
 
         foreach ($appointments as $appointment) {
@@ -23,6 +23,7 @@ class SystemCalendarController extends Controller
                 'title' => $appointment->client->name . ' ('.$appointment->employee->name.')',
                 'start' => $appointment->start_time,
                 'url'   => route('admin.appointments.edit', $appointment->id),
+                'lang'=>'fr'
             ];
         }
 

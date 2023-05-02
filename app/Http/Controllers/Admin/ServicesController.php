@@ -14,46 +14,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ServicesController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->ajax()) {
-            $query = Service::query()->select(sprintf('%s.*', (new Service)->table));
-            $table = Datatables::of($query);
 
-            $table->addColumn('placeholder', '&nbsp;');
-            $table->addColumn('actions', '&nbsp;');
-
-            $table->editColumn('actions', function ($row) {
-                $viewGate      = 'service_show';
-                $editGate      = 'service_edit';
-                $deleteGate    = 'service_delete';
-                $crudRoutePart = 'services';
-
-                return view('partials.datatablesActions', compact(
-                    'viewGate',
-                    'editGate',
-                    'deleteGate',
-                    'crudRoutePart',
-                    'row'
-                ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : "";
-            });
-            $table->editColumn('name', function ($row) {
-                return $row->name ? $row->name : "";
-            });
-            $table->editColumn('price', function ($row) {
-                return $row->price ? $row->price : "";
-            });
-
-            $table->rawColumns(['actions', 'placeholder']);
-
-            return $table->make(true);
-        }
-
-        return view('admin.services.index');
+        $services=Service::all();
+        return view('admin.services.index',compact('services'));
     }
 
     public function create()
@@ -84,10 +49,11 @@ class ServicesController extends Controller
         return redirect()->route('admin.services.index');
     }
 
-    public function show(Service $service)
+    public function show($id)
     {
-        abort_if(Gate::denies('service_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+
+         $service= Service::find($id);
         return view('admin.services.show', compact('service'));
     }
 

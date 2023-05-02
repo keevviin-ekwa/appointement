@@ -19,7 +19,9 @@
 
 @section('scripts')
     @parent
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js'>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/lang-all.js"></script>
+
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.1.0/fullcalendar.min.js'></script>
     <script>
       $(document).ready(function () {
@@ -28,7 +30,8 @@
         $('#calendar').fullCalendar({
           // put your options and callbacks here
           events: events,
-          defaultView: 'agendaWeek'
+          defaultView: 'agendaWeek',
+
         })
       })
     </script>

@@ -125,6 +125,16 @@
                     </a>
                 </li>
             @endcan
+            @can('client_access')
+                <li class="nav-item">
+                    <a href="{{ route("admin.services.index") }}" class="nav-link {{ request()->is('admin/services') || request()->is('admin/services/*') ? 'active' : '' }}">
+                        <i class="fa-fw fas fa-cogs nav-icon">
+
+                        </i>
+                        Prestations
+                    </a>
+                </li>
+            @endcan
             @can('appointment_access')
                 <li class="nav-item">
                     <a href="{{ route("admin.appointments.index") }}" class="nav-link {{ request()->is('admin/appointments') || request()->is('admin/appointments/*') ? 'active' : '' }}">

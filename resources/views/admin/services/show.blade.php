@@ -3,7 +3,7 @@
 
 <div class="card">
     <div class="card-header">
-        {{ trans('global.show') }} {{ trans('cruds.service.title') }}
+        Service
     </div>
 
     <div class="card-body">
@@ -12,7 +12,7 @@
                 <tbody>
                     <tr>
                         <th>
-                            {{ trans('cruds.service.fields.id') }}
+                            Id
                         </th>
                         <td>
                             {{ $service->id }}
@@ -20,24 +20,51 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.service.fields.name') }}
+                            Date de reservation
                         </th>
                         <td>
-                            {{ $service->name }}
+                            {{ \Carbon\Carbon::parse($service->appointment->start_time) }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.service.fields.price') }}
+                            Client
                         </th>
                         <td>
-                            ${{ $service->price }}
+                            {{ $service->appointment->client->name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Cout
+                        </th>
+                        <td>
+                            {{ $service->price}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Soins
+                        </th>
+                        <td>
+                            @foreach($service->cares as $care)
+                                <span class="badge badge-primary">{{$care->name}}</span>
+                                <br>
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Employé
+                        </th>
+                        <td>
+                            {{ $service->appointment->employee->name }}
                         </td>
                     </tr>
                 </tbody>
             </table>
             <a style="margin-top:20px;" class="btn btn-default" href="{{ url()->previous() }}">
-                {{ trans('global.back_to_list') }}
+                Liste des prestations
             </a>
         </div>
 

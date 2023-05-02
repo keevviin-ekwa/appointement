@@ -5,7 +5,9 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
@@ -49,8 +51,10 @@ class Appointment extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function services():BelongsToMany
+    public function services():HasOne
     {
-        return $this->belongsToMany(Service::class);
+        return $this->hasOne(Service::class);
     }
+
+
 }
